@@ -209,4 +209,4 @@ EXPOSE 8080
 HEALTHCHECK --interval=5s --timeout=10s --retries=3 CMD [ "/healthcheck", "8080" ]
 
 # CMD ["nginx", "-g", "daemon off;"]
-CMD ["/usr/sbin/nginx", "-g", "error_log /dev/stderr notice;", "-c", "/etc/nginx/nginx.conf"]
+CMD ["/usr/sbin/nginx", "-c", "/etc/nginx/nginx.conf"]
