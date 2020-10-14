@@ -13,6 +13,13 @@ jobs:
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v2
+
+      - name: extract tag
+        id: vars
+        run: echo ::set-output name=nginx_version::$(cat Dockerfile| grep "NGINX_VERSION" | head -1 | awk -F= '{ print $2 }' | sed 's/[",]//g')
+
+      - run: echo "Pushing version ${{ steps.vars.outputs.nginx_version }}"
+
       - name: Push to GitHub Packages
         uses: docker/build-push-action@v1
         env:
@@ -23,4 +30,14 @@ jobs:
           registry: ghcr.io
           repository: bratteng/nginx
           cache_froms: ghcr.io/bratteng/nginx:latest
-          tags: latest, mainline, 1.19, 1.19.3
+          tags: latest, mainline, ${{ steps.vars.outputs.nginx_version }}
+
+      - name: Create GitHub release
+        uses: actions/create-release@v1.1.4
+        with:
+          tag_name: ${{ steps.vars.outputs.nginx_version }}
+          release_name: nginx
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
