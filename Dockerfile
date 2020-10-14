@@ -183,8 +183,11 @@ RUN rm -r /opt && mkdir /opt \
 # start from the distroless scratch image (with glibc), based on debian:buster
 FROM gcr.io/distroless/base-debian10:nonroot
 
-LABEL maintainer="Bratteng Solutions <docker@bratteng.solutions>"
-LABEL description="Hardned nginx image built with brotli and custom header support"
+# container label annotations
+LABEL maintainer="hello@bratteng.solutions"
+LABEL name="nginx"
+LABEL url="https://github.com/bratteng/docker-nginx"
+LABEL description="Hardened nginx image built with brotli and custom header support"
 
 # copy in our healthcheck binary
 COPY --from=gobuilder --chown=nonroot /healthcheck /healthcheck
