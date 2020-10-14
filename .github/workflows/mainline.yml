@@ -20,8 +20,7 @@ jobs:
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.CR_PAT }}
-          path: mainline
           registry: ghcr.io
           repository: bratteng/nginx
-          cache_froms: ghcr.io/bratteng/nginx:mainline
-          tags: mainline
+          cache_froms: ghcr.io/bratteng/nginx:latest
+          tags: latest, mainline, 1.19, 1.19.3

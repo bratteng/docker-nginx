@@ -127,6 +127,8 @@ ENV NGINX_CONFIG="\
 
 COPY --from=source /usr/src /usr/src
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 RUN set -xe \
 	&& apt update \
 	&& apt install --no-install-recommends --no-install-suggests -y \
@@ -156,8 +158,6 @@ RUN set -xe \
 	&& ln -s /usr/lib/nginx/modules /etc/nginx/modules \
 	&& strip /usr/sbin/nginx* \
 	&& strip /usr/lib/nginx/modules/*.so
-
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # copy the required libraries out of the official nginx image (based on debian)
 RUN rm -r /opt && mkdir /opt \
