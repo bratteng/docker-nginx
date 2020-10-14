@@ -2,9 +2,6 @@ name: Build and push nginx:mainline
 
 on:
   push:
-    paths:
-      - "mainline/**"
-      - ".github/workflows/mainline.yml"
 
 jobs:
   mainline:
