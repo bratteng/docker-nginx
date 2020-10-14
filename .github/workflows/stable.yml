@@ -1,0 +1,27 @@
+name: Build and push nginx:stable
+
+on:
+  push:
+    paths:
+      - "stable/**"
+      - ".github/workflows/stable.yml"
+
+jobs:
+  stable:
+    name: Build stable image
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v2
+      - name: Push to GitHub Packages
+        uses: docker/build-push-action@v1
+        env:
+          DOCKER_BUILDKIT: 1
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}
+          path: stable
+          registry: ghcr.io
+          repository: bratteng/nginx
+          cache_froms: ghcr.io/bratteng/nginx:stable
+          tags: stable
