@@ -5,7 +5,7 @@ on:
 
 jobs:
   golanglint:
-    name: golang lint
+    name: Lint the healthcheck script
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -17,6 +17,7 @@ jobs:
   dockerfilelint:
     name: Dockerfile lint
     runs-on: ubuntu-20.04
+    needs: golanglint
     steps:
       - uses: actions/checkout@v2
       - name: Hadolint with reviewdog
@@ -27,6 +28,7 @@ jobs:
   dockerbuild:
     name: Docker build
     runs-on: ubuntu-20.04
+    needs: dockerfilelint
     steps:
       - uses: actions/checkout@v2
       - uses: docker/setup-buildx-action@v1
@@ -39,6 +41,7 @@ jobs:
   dockerscan:
     name: Docker security scan
     runs-on: ubuntu-20.04
+    needs: dockerbuild
     steps:
       - uses: actions/checkout@v2
       - uses: docker/setup-buildx-action@v1
