@@ -12,6 +12,7 @@ jobs:
       - name: golangci-lint with reviewdog
         uses: reviewdog/action-golangci-lint@v1.1.3
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           workdir: healthcheck
 
   dockerfilelint:
@@ -23,6 +24,7 @@ jobs:
       - name: Hadolint with reviewdog
         uses: reviewdog/action-hadolint@v1
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review
 
   dockerbuild:
