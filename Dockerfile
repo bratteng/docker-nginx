@@ -7,7 +7,7 @@ RUN CGO_ENABLED=0 go build -ldflags '-w -s -extldflags "-static"' -o /healthchec
 # ---
 #
 
-FROM alpine:latest as source
+FROM alpine:3.12 as source
 
 ENV NGINX_VERSION="1.19.3"
 
