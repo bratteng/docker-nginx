@@ -1,0 +1,54 @@
+name: Dockerfile linting
+
+on:
+  pull_request:
+
+jobs:
+  golanglint:
+    name: golang lint
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: golangci-lint with reviewdog
+        uses: reviewdog/action-golangci-lint@v1.1.3
+        with:
+          workdir: healthcheck
+
+  dockerfilelint:
+    name: Dockerfile lint
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Hadolint with reviewdog
+        uses: reviewdog/action-hadolint@v1
+        with:
+          reporter: github-pr-review
+
+  dockerbuild:
+    name: Docker build
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: docker/setup-buildx-action@v1
+      - name: extract tag
+        id: vars
+        run: echo ::set-output name=nginx_version::$(cat Dockerfile| grep "NGINX_VERSION" | head -1 | awk -F= '{ print $2 }' | sed 's/[",]//g')
+      - name: Docker build
+        run: docker buildx build . --file Dockerfile --tag image:${{ steps.vars.outputs.nginx_version }}
+
+  dockerscan:
+    name: Docker security scan
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: docker/setup-buildx-action@v1
+      - name: Docker build
+        run: docker buildx build --file Dockerfile --tag image:${{ github.sha }} .
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.0.8
+        with:
+          image-ref: 'image:${{ github.sha }}'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
