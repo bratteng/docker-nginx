@@ -11,50 +11,32 @@ FROM debian:buster-slim as source
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV NGINX_VERSION="1.19.3"
+ENV OPENSSL_VERSION="1.1.1h"
 
-# Download nginx source and verify signature
+# Download nginx and openssl source
 RUN set -xe \
 	\
-	&& NGINX_URL="https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz" \
+	&& OPENSSL_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz" \
+	&& OPENSSL_SHA256="5c9ca8774bd7b03e5784f26ae9e9e6d749c9da2438545077e6b3d755a06595d9" \
+	&& NGINX_URL="https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz" \
 	&& NGINX_SHA256="91e5b74fa17879d2463294e93ad8f6ffc066696ae32ad0478ffe15ba0e9e8df0" \
-	&& NGINX_ASC_URL="https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz.asc" \
-	&& GPG_KEYS="B0F4253373F8F6F510D42178520A9993A1C052F8" \
 	\
 	&& apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
 		ca-certificates \
 		curl \
-		gnupg \
-	\
-	&& curl -o nginx.tar.gz $NGINX_URL \
-	\
-	&& if [ -n "$NGINX_SHA256" ]; then \
-		echo "$NGINX_SHA256 *nginx.tar.gz" | sha256sum -c -; \
-	fi \
-	\
-	&& if [ -n "$NGINX_ASC_URL" ]; then \
-		curl -o nginx.tar.gz.asc $NGINX_ASC_URL \
-		&& GNUPGHOME="$(mktemp -d)" \
-		&& export GNUPGHOME \
-		&& for key in $GPG_KEYS; do \
-			gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key"; \
-		done \
-		&& gpg --batch --verify nginx.tar.gz.asc nginx.tar.gz \
-		&& rm -rf "$GNUPGHOME" nginx.tar.gz.asc; \
-	fi
-
-RUN set -xe \
-	\
-	&& apt-get update \
-	&& apt-get install --no-install-recommends --no-install-suggests -y \
-		curl \
 		tar \
 		git \
 	\
-	&& mkdir -p /usr/src \
-	&& mkdir -p /usr/src/nginx \
+	&& curl -o openssl.tar.gz $OPENSSL_URL \
+	&& curl -o nginx.tar.gz $NGINX_URL \
+	\
+	&& echo "$OPENSSL_SHA256 *openssl.tar.gz" | sha256sum -c - \
+	&& echo "$NGINX_SHA256 *nginx.tar.gz" | sha256sum -c - \
+	&& mkdir -p /usr/src/{nginx,openssl} \
 	&& tar -zx -C /usr/src/nginx -f nginx.tar.gz --strip-components 1 \
-	&& rm /nginx.tar.gz \
+	&& tar -zx -C /usr/src/openssl -f openssl.tar.gz --strip-components 1 \
+	&& rm /{nginx,openssl}.tar.gz \
 	\
 	&& git clone https://github.com/openresty/headers-more-nginx-module.git /usr/src/headers-more-nginx-module \
 	&& git clone --recursive https://github.com/google/ngx_brotli.git /usr/src/ngx_brotli
@@ -104,6 +86,7 @@ ENV NGINX_CONFIG="\
 --with-http_xslt_module=dynamic \
 --with-mail \
 --with-mail_ssl_module \
+--with-openssl=/usr/src/openssl \
 --with-pcre \
 --with-pcre-jit \
 --with-perl_modules_path=/usr/lib/perl5/vendor_perl \
