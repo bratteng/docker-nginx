@@ -29,7 +29,7 @@ jobs:
           reporter: github-pr-review
 
   dockerbuild:
-    name: Docker build
+    name: Docker build with buildx
     runs-on: ubuntu-20.04
     needs: dockerfilelint
     steps:
