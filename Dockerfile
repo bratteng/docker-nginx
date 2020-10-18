@@ -137,7 +137,7 @@ RUN set -xe \
 	&& ./configure $NGINX_CONFIG \
 		--with-cc-opt='-g -O2  -fstack-protector-strong -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fPIC' \
 		--with-ld-opt='-Wl,-z,relro -Wl,-z,now -Wl,--as-needed -pie' \
-	&& make -j$(getconf _NPROCESSORS_ONLN) \
+	&& make -j "$(getconf _NPROCESSORS_ONLN)" \
 	&& make install \
 	\
 	&& rm -rf /etc/nginx/html/ \
