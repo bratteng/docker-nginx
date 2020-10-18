@@ -19,7 +19,6 @@ jobs:
   dockerfilelint:
     name: Dockerfile lint
     runs-on: ubuntu-20.04
-    needs: golanglint
     steps:
       - uses: actions/checkout@v2
       - name: Hadolint with reviewdog
