@@ -7,71 +7,63 @@ RUN CGO_ENABLED=0 go build -ldflags '-w -s -extldflags "-static"' -o /healthchec
 # ---
 #
 
-FROM alpine:3.12 as source
+FROM debian:buster-slim as source
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV NGINX_VERSION="1.19.3"
 
 # Download nginx source and verify signature
-RUN set -xe; \
+RUN set -xe \
 	\
-	NGINX_URL="https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz"; \
-	NGINX_ASC_URL="https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz.asc"; \
-	NGINX_SHA256="91e5b74fa17879d2463294e93ad8f6ffc066696ae32ad0478ffe15ba0e9e8df0"; \
-	GPG_KEYS="B0F4253373F8F6F510D42178520A9993A1C052F8"; \
+	&& NGINX_URL="https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz" \
+	&& NGINX_SHA256="91e5b74fa17879d2463294e93ad8f6ffc066696ae32ad0478ffe15ba0e9e8df0" \
+	&& NGINX_ASC_URL="https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz.asc" \
+	&& GPG_KEYS="B0F4253373F8F6F510D42178520A9993A1C052F8" \
 	\
-	apk update; \
-	apk add --no-cache --virtual .build-deps \
+	&& apt-get update \
+	&& apt-get install --no-install-recommends --no-install-suggests -y \
+		ca-certificates \
 		curl \
 		gnupg \
-	; \
 	\
-	curl -o nginx.tar.gz $NGINX_URL; \
+	&& curl -o nginx.tar.gz $NGINX_URL \
 	\
-	if [ -n "$NGINX_SHA256" ]; then \
+	&& if [ -n "$NGINX_SHA256" ]; then \
 		echo "$NGINX_SHA256 *nginx.tar.gz" | sha256sum -c -; \
-	fi; \
+	fi \
 	\
-	if [ -n "$NGINX_ASC_URL" ]; then \
-		curl -o nginx.tar.gz.asc $NGINX_ASC_URL; \
-		export GNUPGHOME="$(mktemp -d)"; \
-		for key in $GPG_KEYS; do \
+	&& if [ -n "$NGINX_ASC_URL" ]; then \
+		curl -o nginx.tar.gz.asc $NGINX_ASC_URL \
+		&& GNUPGHOME="$(mktemp -d)" \
+		&& export GNUPGHOME \
+		&& for key in $GPG_KEYS; do \
 			gpg --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key"; \
-		done; \
-		gpg --batch --verify nginx.tar.gz.asc nginx.tar.gz; \
-		rm -rf "$GNUPGHOME" nginx.tar.gz.asc; \
-	fi; \
-	\
-	apk del .build-deps; \
-	rm -rf /var/cache/apk/*
+		done \
+		&& gpg --batch --verify nginx.tar.gz.asc nginx.tar.gz \
+		&& rm -rf "$GNUPGHOME" nginx.tar.gz.asc; \
+	fi
 
-RUN set -xe; \
+RUN set -xe \
 	\
-	apk update; \
-	apk add --no-cache --virtual .build-deps \
+	&& apt-get update \
+	&& apt-get install --no-install-recommends --no-install-suggests -y \
 		curl \
 		tar \
 		git \
-	; \
 	\
-	mkdir -p /usr/src; \
-	mkdir -p /usr/src/nginx; \
-	tar -zx -C /usr/src/nginx -f nginx.tar.gz --strip-components 1; \
-	rm /nginx.tar.gz;  \
+	&& mkdir -p /usr/src \
+	&& mkdir -p /usr/src/nginx \
+	&& tar -zx -C /usr/src/nginx -f nginx.tar.gz --strip-components 1 \
+	&& rm /nginx.tar.gz \
 	\
-	git clone https://github.com/openresty/headers-more-nginx-module.git /usr/src/headers-more-nginx-module; \
-	git clone --recursive https://github.com/google/ngx_brotli.git /usr/src/ngx_brotli; \
-	\
-	apk del .build-deps; \
-	rm -rf /var/cache/apk/*
+	&& git clone https://github.com/openresty/headers-more-nginx-module.git /usr/src/headers-more-nginx-module \
+	&& git clone --recursive https://github.com/google/ngx_brotli.git /usr/src/ngx_brotli
 
 #
 # ---
 #
 
 FROM debian:buster-slim AS builder
-
-# LABEL maintainer="Bratteng Solutions <docker@bratteng.solutions>"
-# LABEL description="Nginx image built with brotli and custom header support"
 
 # Define nginx configure params
 ENV NGINX_CONFIG="\
@@ -128,10 +120,11 @@ ENV NGINX_CONFIG="\
 COPY --from=source /usr/src /usr/src
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+WORKDIR /usr/src/nginx
 
 RUN set -xe \
-	&& apt update \
-	&& apt install --no-install-recommends --no-install-suggests -y \
+	&& apt-get update \
+	&& apt-get install --no-install-recommends --no-install-suggests -y \
 		build-essential \
 		libpcre3-dev \
 		libssl-dev \
@@ -141,7 +134,6 @@ RUN set -xe \
 		libgeoip-dev \
 		libperl-dev \
 	\
-	&& cd /usr/src/nginx \
 	&& ./configure $NGINX_CONFIG \
 		--with-cc-opt='-g -O2  -fstack-protector-strong -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -fPIC' \
 		--with-ld-opt='-Wl,-z,relro -Wl,-z,now -Wl,--as-needed -pie' \

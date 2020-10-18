@@ -27,6 +27,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review
+          hadolint_ignore: DL3008
 
   dockerbuild:
     name: Docker build with buildx
