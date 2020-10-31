@@ -10,7 +10,7 @@ RUN CGO_ENABLED=0 go build -ldflags '-w -s -extldflags "-static"' -o /healthchec
 FROM debian:buster-slim as source
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-ENV NGINX_VERSION="1.19.3"
+ENV NGINX_VERSION="1.19.4"
 ENV OPENSSL_VERSION="1.1.1h"
 
 # Download nginx and openssl source
@@ -19,7 +19,7 @@ RUN set -xe \
 	&& OPENSSL_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz" \
 	&& OPENSSL_SHA256="5c9ca8774bd7b03e5784f26ae9e9e6d749c9da2438545077e6b3d755a06595d9" \
 	&& NGINX_URL="https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz" \
-	&& NGINX_SHA256="91e5b74fa17879d2463294e93ad8f6ffc066696ae32ad0478ffe15ba0e9e8df0" \
+	&& NGINX_SHA256="61df546927905a0d624f9396bb7a8bc7ca7fd26522ce9714d56a78b73284000e" \
 	\
 	&& apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
