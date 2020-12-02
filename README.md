@@ -6,8 +6,3 @@ Secure base image for running nginx. Built with [brotli](https://github.com/goog
 ```
 docker pull ghcr.io/bratteng/nginx:mainline
 ```
-
-## Latest stable version **1.18.0**
-```
-docker pull ghcr.io/bratteng/nginx:stable
-```
