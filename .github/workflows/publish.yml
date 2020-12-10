@@ -10,23 +10,53 @@ jobs:
     name: Build mainline image
     runs-on: ubuntu-20.04
     steps:
-      - name: Checkout the repo
+      -
+        name: Checkout the repo
         uses: actions/checkout@v2
 
-      - name: extract tag
+      -
+        name: extract tag
         id: vars
         run: echo ::set-output name=nginx_version::$(cat Dockerfile| grep "NGINX_VERSION" | head -1 | awk -F= '{ print $2 }' | sed 's/[",]//g')
 
-      - run: echo "Pushing version ${{ steps.vars.outputs.nginx_version }}"
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
-      - name: Push to GitHub Packages
-        uses: docker/build-push-action@v1
-        env:
-          DOCKER_BUILDKIT: 1
+      -
+        name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
         with:
-          username: ${{ github.actor }}
-          password: ${{ secrets.CR_PAT }}
           registry: ghcr.io
-          repository: bratteng/nginx
-          cache_froms: ghcr.io/bratteng/nginx:latest
-          tags: latest, mainline, ${{ steps.vars.outputs.nginx_version }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+
+      -
+        name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      -
+        name: Dockerx build
+        run: |
+          docker buildx build . --load \
+            --tag ghcr.io/bratteng/nginx:latest \
+            --cache-to=type=local,dest=/tmp/.buildx-cache \
+            --cache-from=type=local,src=/tmp/.buildx-cache
+
+      -
+        name: Tag images
+        run: |
+          docker tag ghcr.io/bratteng/nginx:latest ghcr.io/bratteng/nginx:mainline
+          docker tag ghcr.io/bratteng/nginx:latest ghcr.io/bratteng/nginx:${{ steps.vars.outputs.nginx_version }}
+
+      -
+        name: Push images
+        run: |
+          docker push ghcr.io/bratteng/nginx:latest
+          docker push ghcr.io/bratteng/nginx:mainline
+          docker push ghcr.io/bratteng/nginx:${{ steps.vars.outputs.nginx_version }}
