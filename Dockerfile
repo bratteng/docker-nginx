@@ -11,16 +11,16 @@ FROM debian:buster-slim as source
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV NGINX_VERSION="1.19.7"
-ENV OPENSSL_VERSION="1.1.1i"
+ENV OPENSSL_VERSION="1.1.1j"
 
 # NGINX_VERSION="1.19.7"; curl -s https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz | sha256sum | head -c 64 | pbcopy
-# OPENSSL_VERSION="1.1.1i"; curl -s https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz | sha256sum | head -c 64 | pbcopy
+# OPENSSL_VERSION="1.1.1j"; curl -s https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz | sha256sum | head -c 64 | pbcopy
 
 # Download nginx and openssl source
 RUN set -xe \
 	\
 	&& OPENSSL_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz" \
-	&& OPENSSL_SHA256="e8be6a35fe41d10603c3cc635e93289ed00bf34b79671a3a4de64fcee00d5242" \
+	&& OPENSSL_SHA256="aaf2fcb575cdf6491b98ab4829abf78a3dec8402b8b81efc8f23c00d443981bf" \
 	&& NGINX_URL="https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz" \
 	&& NGINX_SHA256="7ae4dd020c41d3a5e1e6a8578fcc60e508e3e27e7668e845ddc87a05a775b50e" \
 	\
