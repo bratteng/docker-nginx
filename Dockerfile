@@ -10,10 +10,10 @@ RUN CGO_ENABLED=0 go build -ldflags '-w -s -extldflags "-static"' -o /healthchec
 FROM debian:buster-slim as source
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-ENV NGINX_VERSION="1.19.6"
+ENV NGINX_VERSION="1.19.7"
 ENV OPENSSL_VERSION="1.1.1i"
 
-# NGINX_VERSION="1.19.6"; curl -s https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz | sha256sum | head -c 64 | pbcopy
+# NGINX_VERSION="1.19.7"; curl -s https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz | sha256sum | head -c 64 | pbcopy
 # OPENSSL_VERSION="1.1.1i"; curl -s https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz | sha256sum | head -c 64 | pbcopy
 
 # Download nginx and openssl source
@@ -22,7 +22,7 @@ RUN set -xe \
 	&& OPENSSL_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz" \
 	&& OPENSSL_SHA256="e8be6a35fe41d10603c3cc635e93289ed00bf34b79671a3a4de64fcee00d5242" \
 	&& NGINX_URL="https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz" \
-	&& NGINX_SHA256="b11195a02b1d3285ddf2987e02c6b6d28df41bb1b1dd25f33542848ef4fc33b5" \
+	&& NGINX_SHA256="7ae4dd020c41d3a5e1e6a8578fcc60e508e3e27e7668e845ddc87a05a775b50e" \
 	\
 	&& apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
