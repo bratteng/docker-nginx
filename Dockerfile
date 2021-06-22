@@ -1,12 +1,3 @@
-# image used for the healthcheck binary
-FROM golang:1.15.2-alpine AS gobuilder
-COPY healthcheck/ /go/src/healthcheck/
-RUN CGO_ENABLED=0 go build -ldflags '-w -s -extldflags "-static"' -o /healthcheck /go/src/healthcheck/
-
-#
-# ---
-#
-
 FROM debian:buster-slim as source
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -168,7 +159,7 @@ LABEL url="https://github.com/bratteng/docker-nginx"
 LABEL description="Hardened nginx image built with brotli and custom header support"
 
 # copy in our healthcheck binary
-COPY --from=gobuilder --chown=nonroot /healthcheck /healthcheck
+COPY --from=ghcr.io/bratteng/healthcheck:latest --chown=nonroot /healthcheck /healthcheck
 
 # copy in our required libraries
 COPY --from=builder --chown=nonroot /opt /
@@ -184,7 +175,7 @@ USER nonroot
 EXPOSE 8080
 
 # healthcheck to report the container status
-HEALTHCHECK --interval=5s --timeout=10s --retries=3 CMD [ "/healthcheck", "8080" ]
+HEALTHCHECK --interval=5s --timeout=10s --retries=3 CMD [ "/healthcheck", "-path", "healthz", "-port", "8080" ]
 
 # CMD ["nginx", "-g", "daemon off;"]
 CMD ["/usr/sbin/nginx", "-c", "/etc/nginx/nginx.conf"]
