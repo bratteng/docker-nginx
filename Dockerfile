@@ -3,7 +3,7 @@ FROM debian:buster-slim as source
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Download nginx and openssl source
 RUN \
-	&& apt-get update \
+	apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
 		ca-certificates \
 		curl \
@@ -85,7 +85,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 WORKDIR /usr/src/nginx
 
 RUN \
-	&& apt-get update \
+	apt-get update \
 	&& apt-get install --no-install-recommends --no-install-suggests -y \
 		build-essential \
 		libpcre3-dev \
@@ -136,12 +136,6 @@ RUN rm -r /opt && mkdir /opt \
 
 # start from the distroless scratch image (with glibc), based on debian:buster
 FROM gcr.io/distroless/base-debian10:nonroot
-
-# container label annotations
-LABEL maintainer="hello@bratteng.solutions"
-LABEL name="nginx"
-LABEL url="https://github.com/bratteng/docker-nginx"
-LABEL description="Hardened nginx image built with brotli and custom header support"
 
 # copy in our healthcheck binary
 COPY --from=ghcr.io/bratteng/healthcheck:latest --chown=nonroot /healthcheck /healthcheck
