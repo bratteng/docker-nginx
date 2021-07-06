@@ -3,8 +3,12 @@ name: release
 on:
   workflow_dispatch:
   push:
+    paths:
+      - ".github/workflows/publish.yml"
+      - "conf/**"
+      - "Dockerfile"
     branches:
-        - main
+      - main
 
 jobs:
   build:

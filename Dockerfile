@@ -165,8 +165,9 @@ COPY --from=ghcr.io/bratteng/healthcheck:latest --chown=nonroot /healthcheck /he
 COPY --from=builder --chown=nonroot /opt /
 
 # Copy the config files into nginx folder
-COPY --chown=nonroot nginx.conf mime.types /etc/nginx/
-COPY --chown=nonroot default.conf /etc/nginx/conf.d/
+COPY --chown=nonroot ./conf/nginx.conf /etc/nginx/
+COPY --chown=nonroot ./conf/mime.types /etc/nginx/
+COPY --chown=nonroot ./conf/default.conf /etc/nginx/conf.d/
 
 # run as an unprivileged user
 USER nonroot
