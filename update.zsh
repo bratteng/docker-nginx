@@ -18,4 +18,4 @@ export OPENSSL_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.ta
 export NGINX_SHA256=$(sha256sum <(curl -s $NGINX_URL) | head -c 64)
 export OPENSSL_SHA256=$(sha256sum <(curl -s $OPENSSL_URL) | head -c 64)
 
-envsubst \${NGINX_SHA256},\${OPENSSL_SHA256},\${NGINX_URL},\${OPENSSL_URL} < Dockerfile.template > Dockerfile
+envsubst \${NGINX_SHA256},\${OPENSSL_SHA256},\${NGINX_URL},\${OPENSSL_URL},\${NGINX_VERSION} < Dockerfile.template > Dockerfile

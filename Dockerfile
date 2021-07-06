@@ -1,5 +1,6 @@
 FROM debian:buster-slim as source
 
+ENV NGINX_VERSION=1.21.1
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Download nginx and openssl source
 RUN \
