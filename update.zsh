@@ -9,7 +9,7 @@ if ! command_exists envsubst; then
 	exit 1
 fi
 
-export NGINX_VERSION="1.21.2"
+export NGINX_VERSION="1.21.3"
 export OPENSSL_VERSION="1.1.1l"
 
 export NGINX_URL="https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz"
