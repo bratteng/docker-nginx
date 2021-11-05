@@ -1,6 +1,6 @@
 FROM debian:buster-slim as source
 
-ENV NGINX_VERSION=1.21.3
+ENV NGINX_VERSION=1.21.4
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Download nginx and openssl source
@@ -13,10 +13,10 @@ RUN \
 		git \
 	\
 	&& curl -o openssl.tar.gz https://www.openssl.org/source/openssl-3.0.0.tar.gz \
-	&& curl -o nginx.tar.gz https://nginx.org/download/nginx-1.21.3.tar.gz \
+	&& curl -o nginx.tar.gz https://nginx.org/download/nginx-1.21.4.tar.gz \
 	\
 	&& echo "59eedfcb46c25214c9bd37ed6078297b4df01d012267fe9e9eee31f61bc70536 *openssl.tar.gz" | sha256sum -c - \
-	&& echo "14774aae0d151da350417efc4afda5cce5035056e71894836797e1f6e2d1175a *nginx.tar.gz" | sha256sum -c - \
+	&& echo "d1f72f474e71bcaaf465dcc7e6f7b6a4705e4b1ed95c581af31df697551f3bfe *nginx.tar.gz" | sha256sum -c - \
 	&& mkdir -p /usr/src/{nginx,openssl} \
 	&& tar -zx -C /usr/src/nginx -f nginx.tar.gz --strip-components 1 \
 	&& tar -zx -C /usr/src/openssl -f openssl.tar.gz --strip-components 1 \
