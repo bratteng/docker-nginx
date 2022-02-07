@@ -1,4 +1,4 @@
-FROM debian:buster-slim as source
+FROM debian:bullseye-slim as source
 
 ENV NGINX_VERSION=1.21.6
 
@@ -26,7 +26,7 @@ RUN \
 	&& git clone --recursive https://github.com/google/ngx_brotli.git /usr/src/ngx_brotli
 
 # Builder stage
-FROM debian:buster-slim AS builder
+FROM debian:bullseye-slim AS builder
 
 # Define nginx configure params
 ENV NGINX_CONFIG="\
@@ -131,13 +131,12 @@ RUN rm -r /opt && mkdir /opt \
     && cp -a --parents /usr/lib/x86_64-linux-gnu/libcrypto.so.* /opt \
     && cp -a --parents /lib/x86_64-linux-gnu/libdl-* /opt \
     && cp -a --parents /lib/x86_64-linux-gnu/libpthread-* /opt \
-    && cp -a --parents /lib/x86_64-linux-gnu/libcrypt-* /opt \
     && cp -a --parents /lib/x86_64-linux-gnu/libc-* /opt \
 	&& mkdir -p /opt/tmp/{clientbody,proxy,fastcgi,uwsgi,scgi} \
 	&& rm /opt/etc/nginx/*.default
 
-# start from the distroless scratch image (with glibc), based on debian:buster
-FROM gcr.io/distroless/base-debian10:nonroot
+# start from the distroless scratch image (with glibc), based on debian:bullseye
+FROM gcr.io/distroless/base-debian11:nonroot
 
 # copy in our healthcheck binary
 COPY --from=ghcr.io/bratteng/healthcheck:latest --chown=nonroot /healthcheck /healthcheck
