@@ -149,6 +149,7 @@ COPY --from=builder --chown=nonroot /opt /
 COPY --chown=nonroot ./conf/nginx.conf /etc/nginx/
 COPY --chown=nonroot ./conf/mime.types /etc/nginx/
 COPY --chown=nonroot ./conf/default.conf /etc/nginx/conf.d/
+COPY --chown=nonroot ./conf/healthcheck.conf /etc/nginx/conf.d/
 
 # run as an unprivileged user
 USER nonroot
@@ -157,7 +158,7 @@ USER nonroot
 EXPOSE 8080
 
 # healthcheck to report the container status
-HEALTHCHECK --interval=5s --timeout=10s --retries=3 CMD [ "/healthcheck", "-path", "healthz", "-port", "8080" ]
+HEALTHCHECK --interval=5s --timeout=10s --retries=3 CMD [ "/healthcheck", "-path", "healthz", "-port", "8081" ]
 
 # CMD ["nginx", "-g", "daemon off;"]
 CMD ["/usr/sbin/nginx", "-c", "/etc/nginx/nginx.conf"]
