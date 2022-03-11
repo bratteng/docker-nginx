@@ -148,7 +148,6 @@ COPY --from=builder --chown=nonroot /opt /
 COPY --chown=nonroot ./conf/nginx.conf /etc/nginx/
 COPY --chown=nonroot ./conf/mime.types /etc/nginx/
 COPY --chown=nonroot ./conf/default.conf /etc/nginx/conf.d/
-COPY --chown=nonroot ./conf/healthcheck.conf /etc/nginx/conf.d/
 
 # run as an unprivileged user
 USER nonroot
