@@ -1,6 +1,6 @@
 FROM debian:bullseye-slim as source
 
-ENV NGINX_VERSION=1.21.6
+ENV NGINX_VERSION=1.23.0
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Download nginx and openssl source
@@ -13,10 +13,10 @@ RUN \
 		git \
 	\
 	&& curl -o openssl.tar.gz https://www.openssl.org/source/openssl-3.0.4.tar.gz \
-	&& curl -o nginx.tar.gz https://nginx.org/download/nginx-1.21.6.tar.gz \
+	&& curl -o nginx.tar.gz https://nginx.org/download/nginx-1.23.0.tar.gz \
 	\
 	&& echo "2831843e9a668a0ab478e7020ad63d2d65e51f72977472dc73efcefbafc0c00f *openssl.tar.gz" | sha256sum -c - \
-	&& echo "66dc7081488811e9f925719e34d1b4504c2801c81dee2920e5452a86b11405ae *nginx.tar.gz" | sha256sum -c - \
+	&& echo "820acaa35b9272be9e9e72f6defa4a5f2921824709f8aa4772c78ab31ed94cd1 *nginx.tar.gz" | sha256sum -c - \
 	&& mkdir -p /usr/src/{nginx,openssl} \
 	&& tar -zx -C /usr/src/nginx -f nginx.tar.gz --strip-components 1 \
 	&& tar -zx -C /usr/src/openssl -f openssl.tar.gz --strip-components 1 \
