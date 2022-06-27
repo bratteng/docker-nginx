@@ -10,7 +10,7 @@ if ! command_exists envsubst; then
 fi
 
 export NGINX_VERSION="1.21.6"
-export OPENSSL_VERSION="3.0.3"
+export OPENSSL_VERSION="3.0.4"
 
 export NGINX_URL="https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz"
 export OPENSSL_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"
