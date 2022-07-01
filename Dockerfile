@@ -138,9 +138,6 @@ RUN rm -r /opt && mkdir /opt \
 # start from the distroless scratch image (with glibc), based on debian:bullseye
 FROM gcr.io/distroless/base-debian11:nonroot
 
-# copy in our healthcheck binary
-COPY --from=ghcr.io/bratteng/healthcheck:latest --chown=nonroot /healthcheck /healthcheck
-
 # copy in our required libraries
 COPY --from=builder --chown=nonroot /opt /
 
@@ -154,9 +151,6 @@ USER nonroot
 
 # default nginx port
 EXPOSE 8080
-
-# healthcheck to report the container status
-HEALTHCHECK --interval=5s --timeout=10s --retries=3 CMD [ "/healthcheck", "-path", "healthz", "-port", "8081" ]
 
 # CMD ["nginx", "-g", "daemon off;"]
 CMD ["/usr/sbin/nginx", "-c", "/etc/nginx/nginx.conf"]
