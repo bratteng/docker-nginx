@@ -12,10 +12,10 @@ RUN \
 		tar \
 		git \
 	\
-	&& curl -o openssl.tar.gz https://www.openssl.org/source/openssl-3.0.4.tar.gz \
+	&& curl -o openssl.tar.gz https://www.openssl.org/source/openssl-3.0.5.tar.gz \
 	&& curl -o nginx.tar.gz https://nginx.org/download/nginx-1.23.0.tar.gz \
 	\
-	&& echo "2831843e9a668a0ab478e7020ad63d2d65e51f72977472dc73efcefbafc0c00f *openssl.tar.gz" | sha256sum -c - \
+	&& echo "aa7d8d9bef71ad6525c55ba11e5f4397889ce49c2c9349dcea6d3e4f0b024a7a *openssl.tar.gz" | sha256sum -c - \
 	&& echo "820acaa35b9272be9e9e72f6defa4a5f2921824709f8aa4772c78ab31ed94cd1 *nginx.tar.gz" | sha256sum -c - \
 	&& mkdir -p /usr/src/{nginx,openssl} \
 	&& tar -zx -C /usr/src/nginx -f nginx.tar.gz --strip-components 1 \
