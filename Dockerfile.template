@@ -136,7 +136,7 @@ RUN rm -r /opt && mkdir /opt \
 	&& rm /opt/etc/nginx/*.default
 
 # start from the distroless scratch image (with glibc), based on debian:bullseye
-FROM gcr.io/distroless/base-debian11:nonroot@sha256:d237b22939192ac174376fa3a1f5f9f29b220c5195fe13879c7c6c2cfffeb861
+FROM gcr.io/distroless/base-debian11:nonroot@sha256:88f520a1cc0e79ad98ed766ea67418b5bc5e5f56a8cbdaf2cc24fdfffeb882f3
 
 # copy in our required libraries
 COPY --from=builder --chown=nonroot /opt /
