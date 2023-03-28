@@ -9,15 +9,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-20.04
-    environment: cosign
+    # environment: cosign
     steps:
       -
         name: Checkout code
         uses: actions/checkout@v3
 
-      -
-        name: Install cosign
-        uses: sigstore/cosign-installer@v3.0.1
+      # -
+      #   name: Install cosign
+      #   uses: sigstore/cosign-installer@v3.0.1
 
       -
         name: Extract tag nginx version tag
@@ -83,14 +83,14 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
-      -
-        name: Sign image
-        env:
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-        run: |
-          echo "${{ secrets.COSIGN_KEY }}" > cosign.key
-          cosign sign --key cosign.key ghcr.io/bratteng/nginx@${{ steps.build.outputs.digest }}
-          cosign sign --key cosign.key bratteng/nginx@${{ steps.build.outputs.digest }}
+      # -
+      #   name: Sign image
+      #   env:
+      #     COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+      #   run: |
+      #     echo "${{ secrets.COSIGN_KEY }}" > cosign.key
+      #     cosign sign --key cosign.key ghcr.io/bratteng/nginx@${{ steps.build.outputs.digest }}
+      #     cosign sign --key cosign.key bratteng/nginx@${{ steps.build.outputs.digest }}
 
       -
         name: Move cache
