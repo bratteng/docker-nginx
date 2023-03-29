@@ -1,4 +1,4 @@
-FROM debian:bullseye-20230320-slim@sha256:5339bcc1f887a0ecbfc323cc98caa3bcbe0e1ef4a1e747393d6d179deeb2976c as source
+FROM debian:bullseye-20230320-slim@sha256:7acda01e55b086181a6fa596941503648e423091ca563258e2c1657d140355b1 as source
 
 ENV NGINX_VERSION=${NGINX_VERSION}
 
@@ -26,7 +26,7 @@ RUN \
 	&& git clone --recursive https://github.com/google/ngx_brotli.git /usr/src/ngx_brotli
 
 # Builder stage
-FROM debian:bullseye-20230320-slim@sha256:5339bcc1f887a0ecbfc323cc98caa3bcbe0e1ef4a1e747393d6d179deeb2976c AS builder
+FROM debian:bullseye-20230320-slim@sha256:7acda01e55b086181a6fa596941503648e423091ca563258e2c1657d140355b1 AS builder
 
 # Define nginx configure params
 ENV NGINX_CONFIG="\
