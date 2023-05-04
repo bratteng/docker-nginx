@@ -1,4 +1,4 @@
-FROM debian:bullseye-20230411-slim@sha256:9404b05bd09b57c76eccc0c5505b3c88b5feccac808d9b193a4fbac87bb44745 as source
+FROM debian:bullseye-20230502-slim@sha256:51e7984488d0977889ca364c6d9bb7c688700fee61193a400ad2054fd170c212 as source
 
 ENV NGINX_VERSION=1.23.4
 
@@ -26,7 +26,7 @@ RUN \
 	&& git clone --recursive https://github.com/google/ngx_brotli.git /usr/src/ngx_brotli
 
 # Builder stage
-FROM debian:bullseye-20230411-slim@sha256:9404b05bd09b57c76eccc0c5505b3c88b5feccac808d9b193a4fbac87bb44745 AS builder
+FROM debian:bullseye-20230502-slim@sha256:51e7984488d0977889ca364c6d9bb7c688700fee61193a400ad2054fd170c212 AS builder
 
 # Define nginx configure params
 ENV NGINX_CONFIG="\
@@ -136,7 +136,7 @@ RUN rm -r /opt && mkdir /opt \
 	&& rm /opt/etc/nginx/*.default
 
 # start from the distroless scratch image (with glibc), based on debian:bullseye
-FROM gcr.io/distroless/base-debian11:nonroot@sha256:e406b1da09bc455495417a809efe48a03c48011a89f6eb57b0ab882508021c0d
+FROM gcr.io/distroless/base-debian11:nonroot@sha256:10985f0577b62767a2f0218bff7dec33c59a5ef9a587d889bf0861e0c3123d57
 
 # copy in our required libraries
 COPY --from=builder --chown=nonroot /opt /
