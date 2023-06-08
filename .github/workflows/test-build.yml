@@ -1,0 +1,57 @@
+name: test-build
+
+on:
+  pull_request:
+
+jobs:
+  test-build:
+    runs-on: ubuntu-20.04
+    # environment: cosign
+    steps:
+      -
+        name: Checkout code
+        uses: actions/checkout@v3.5.2
+      -
+        name: Docker meta
+        id: docker_meta
+        uses: docker/metadata-action@v4.5.0
+        with:
+          images: |
+            ghcr.io/bratteng/nginx
+          tags: |
+            type=sha
+
+      -
+        name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2.6.0
+        with:
+          install: true
+
+      -
+        name: Cache Docker layers
+        uses: actions/cache@v3.3.1
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx
+            ${{ runner.os }}-
+
+      -
+        name: Build and push
+        id: build
+        uses: docker/build-push-action@v4.0.0
+        with:
+          push: false
+          builder: ${{ steps.buildx.outputs.name }}
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+
+      -
+        name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
