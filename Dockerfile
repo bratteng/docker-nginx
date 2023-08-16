@@ -1,6 +1,6 @@
 FROM debian:bullseye-20230814-slim@sha256:61386e11b5256efa33823cbfafd668dd651dbce810b24a8fb7b2e32fa7f65a85 as source
 
-ENV NGINX_VERSION=1.25.1
+ENV NGINX_VERSION=1.25.2
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 # Download nginx and openssl source
@@ -13,10 +13,10 @@ RUN \
 		git \
 	\
 	&& curl -o openssl.tar.gz https://www.openssl.org/source/openssl-3.1.2.tar.gz \
-	&& curl -o nginx.tar.gz https://nginx.org/download/nginx-1.25.1.tar.gz \
+	&& curl -o nginx.tar.gz https://nginx.org/download/nginx-1.25.2.tar.gz \
 	\
 	&& echo "a0ce69b8b97ea6a35b96875235aa453b966ba3cba8af2de23657d8b6767d6539 *openssl.tar.gz" | sha256sum -c - \
-	&& echo "f09071ac46e0ea3adc0008ef0baca229fc6b4be4533baef9bbbfba7de29a8602 *nginx.tar.gz" | sha256sum -c - \
+	&& echo "05dd6d9356d66a74e61035f2a42162f8c754c97cf1ba64e7a801ba158d6c0711 *nginx.tar.gz" | sha256sum -c - \
 	&& mkdir -p /usr/src/{nginx,openssl} \
 	&& tar -zx -C /usr/src/nginx -f nginx.tar.gz --strip-components 1 \
 	&& tar -zx -C /usr/src/openssl -f openssl.tar.gz --strip-components 1 \
